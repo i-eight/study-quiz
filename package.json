@@ -1,0 +1,45 @@
+{
+  "name": "english-quiz",
+  "version": "0.1.0",
+  "description": "",
+  "keywords": [
+    "graphai"
+  ],
+  "license": "MIT",
+  "author": "hhoriuchi@i-eight.com",
+  "type": "module",
+  "main": "index.ts",
+  "scripts": {
+    "start": "tsx src/index.ts",
+    "build": "tsc -p .",
+    "lint": "run-s -c lint:*",
+    "lint:typescript": "tsc -p . --noEmit",
+    "lint:eslint": "eslint --cache --report-unused-disable-directives --fix .",
+    "lint:format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,md}\" | grep -v \"unchanged\" | xargs",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "@google-cloud/vision": "^4.3.3",
+    "@graphai/agent_filters": "^1.0.0",
+    "@graphai/agents": "^1.0.2",
+    "@graphai/token_bound_string_agent": "^1.0.0",
+    "@graphai/vanilla_node_agents": "^1.0.1",
+    "dotenv": "^16.4.7",
+    "graphai": "^1.0.1",
+    "yaml": "^2.7.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.22.0",
+    "eslint": "^9.22.0",
+    "eslint-config-flat-gitignore": "^2.1.0",
+    "eslint-config-prettier": "^10.1.1",
+    "eslint-plugin-import": "^2.31.0",
+    "eslint-plugin-unused-imports": "^4.1.4",
+    "globals": "^16.0.0",
+    "npm-run-all": "^4.1.5",
+    "prettier": "^3.5.3",
+    "tsx": "^4.19.3",
+    "typescript": "^5.8.2",
+    "typescript-eslint": "^8.26.1"
+  }
+}
