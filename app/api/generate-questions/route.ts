@@ -35,9 +35,9 @@ const mockQuestions = [
   },
 ] satisfies Question[];
 
-export async function POST(_request: NextRequest) {
+export async function POST(request: NextRequest) {
   try {
-    // const { image } = await request.json();
+    const { image } = await request.json();
 
     // In a real implementation, we would:
     // 1. Save the image to a temporary file

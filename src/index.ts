@@ -1,7 +1,7 @@
 import 'dotenv/config';
 import { agentInfoWrapper, GraphAI } from 'graphai';
 import agents from '@graphai/agents';
-import { cloudVisionAgent } from './cloudvisionAgent.js';
+import { cloudVisionAgent } from '../app/lib/cloudvisionAgent.js';
 import { workflow } from './workflow.js';
 
 interface QueryResult {
