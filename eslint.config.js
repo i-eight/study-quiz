@@ -16,7 +16,7 @@ export default tseslint.config(
     ignores: [
       'eslint.config.js',
       'next.config.js',
-      'postcss.config.js',
+      'postcss.config.cjs',
       'tailwind.config.js',
     ],
   },
@@ -45,6 +45,16 @@ export default tseslint.config(
           jsx: true,
         },
       },
+    },
+    rules: {
+      '@typescript-eslint/no-misused-promises': [
+        'error',
+        {
+          checksVoidReturn: {
+            attributes: false,
+          },
+        },
+      ],
     },
   },
   // React configuration

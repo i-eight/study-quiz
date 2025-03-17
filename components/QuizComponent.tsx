@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { QuizState } from '../app/page';
 
 interface QuizComponentProps {
@@ -23,16 +23,16 @@ export default function QuizComponent({
     return null;
   });
 
-  const handleAnswerSelect = (answerIndex: number) => {
+  const handleAnswerSelect = useCallback((answerIndex: number) => {
     setSelectedAnswer(answerIndex);
-  };
+  }, []);
 
-  const handleSubmit = () => {
+  const handleSubmit = useCallback(() => {
     if (selectedAnswer !== null) {
       onAnswer(currentQuestionIndex, selectedAnswer);
       setSelectedAnswer(null);
     }
-  };
+  }, [currentQuestionIndex, onAnswer, selectedAnswer]);
 
   return (
     <div className="card">

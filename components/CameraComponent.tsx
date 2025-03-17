@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useState, useEffect } from 'react';
+import { useRef, useState, useEffect, useCallback } from 'react';
 
 interface CameraComponentProps {
   onCapture: (imageData: string) => void;
@@ -11,7 +11,6 @@ export default function CameraComponent({ onCapture }: CameraComponentProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [isCameraActive, setIsCameraActive] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
   useEffect(() => {
     const stream = videoRef.current?.srcObject as MediaStream;
@@ -23,7 +22,7 @@ export default function CameraComponent({ onCapture }: CameraComponentProps) {
     };
   }, []);
 
-  const startCamera = async () => {
+  const startCamera = useCallback(async () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({
         video: { facingMode: 'environment' },
@@ -40,9 +39,9 @@ export default function CameraComponent({ onCapture }: CameraComponentProps) {
         'カメラへのアクセスができませんでした。カメラの許可を確認してください。',
       );
     }
-  };
+  }, []);
 
-  const stopCamera = () => {
+  const stopCamera = useCallback(() => {
     if (videoRef.current?.srcObject) {
       const stream = videoRef.current.srcObject as MediaStream;
       const tracks = stream.getTracks();
@@ -50,9 +49,9 @@ export default function CameraComponent({ onCapture }: CameraComponentProps) {
       videoRef.current.srcObject = null;
       setIsCameraActive(false);
     }
-  };
+  }, []);
 
-  const captureImage = () => {
+  const captureImage = useCallback(() => {
     if (videoRef.current && canvasRef.current) {
       const video = videoRef.current;
       const canvas = canvasRef.current;
@@ -74,23 +73,25 @@ export default function CameraComponent({ onCapture }: CameraComponentProps) {
         stopCamera();
       }
     }
-  };
+  }, [onCapture, stopCamera]);
 
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const files = event.target.files;
-    if (files && files.length > 0) {
-      const file = files[0]!;
-      setSelectedFile(file);
+  const handleFileChange = useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      const files = event.target.files;
+      if (files && files.length > 0) {
+        const file = files[0]!;
 
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        if (e.target && typeof e.target.result === 'string') {
-          onCapture(e.target.result);
-        }
-      };
-      reader.readAsDataURL(file);
-    }
-  };
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          if (e.target && typeof e.target.result === 'string') {
+            onCapture(e.target.result);
+          }
+        };
+        reader.readAsDataURL(file);
+      }
+    },
+    [onCapture],
+  );
 
   return (
     <div className="card">
