@@ -1,8 +1,8 @@
 import 'dotenv/config';
 import { agentInfoWrapper, GraphAI } from 'graphai';
-import agents from '@graphai/agents';
+import * as agents from '@graphai/agents';
 import { cloudVisionAgent } from '../app/lib/cloudvisionAgent.js';
-import { workflow } from './workflow.js';
+import { getWorkflow } from '../app/api/generate-questions/workflow.js';
 
 interface QueryResult {
   choices: {
@@ -13,6 +13,7 @@ interface QueryResult {
 }
 
 async function main() {
+  const workflow = getWorkflow('inputs/img_h-kyozai_01_page_03.png');
   const graph = new GraphAI(workflow, {
     ...agents,
     cloudVisionAgent: agentInfoWrapper(cloudVisionAgent),

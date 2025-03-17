@@ -12,11 +12,13 @@
 
 1. Google Cloud プロジェクトを作成または選択します
 2. 以下の API を有効にします:
+
    - Cloud Run API
    - Artifact Registry API
    - Cloud Build API
 
 3. サービスアカウントを作成し、以下の権限を付与します:
+
    - Cloud Run Admin
    - Storage Admin
    - Artifact Registry Admin
