@@ -3,7 +3,7 @@ name: Deploy to Cloud Run
 on:
   push:
     branches:
-      - main  # Set this to your default branch
+      - dummy # This workflow is not running, so set up a dummy.
 
 env:
   SERVICE_NAME: study-quiz  # The name of your Cloud Run service
