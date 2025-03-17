@@ -1,0 +1,56 @@
+name: Deploy to Cloud Run
+
+on:
+  push:
+    branches:
+      - main  # Set this to your default branch
+
+env:
+  SERVICE_NAME: study-quiz  # The name of your Cloud Run service
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+          project_id: ${{ secrets.GCP_PROJECT_ID }}
+
+      - name: Authenticate Docker to Google Artifact Registry
+        run: |
+          gcloud auth configure-docker ${{ secrets.GCP_PROJECT_ID }}-docker.pkg.dev
+
+      - name: Build and push Docker image
+        run: |
+          # Set environment variables
+          export IMAGE_NAME="${{ secrets.GCP_PROJECT_ID }}-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/cloud-run-source-deploy/${{ env.SERVICE_NAME }}:${{ github.sha }}"
+          
+          # Build the Docker image
+          docker build -t $IMAGE_NAME .
+          
+          # Push the Docker image to Artifact Registry
+          docker push $IMAGE_NAME
+
+      - name: Deploy to Cloud Run
+        id: deploy
+        uses: google-github-actions/deploy-cloudrun@v2
+        with:
+          service: ${{ env.SERVICE_NAME }}
+          image: ${{ secrets.GCP_PROJECT_ID }}-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/cloud-run-source-deploy/${{ env.SERVICE_NAME }}:${{ github.sha }}
+          region: asia-northeast1  # Change to your preferred region
+          env_vars: |
+            OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }}
+            GOOGLE_CLOUD_QUOTA_PROJECT=${{ secrets.GOOGLE_CLOUD_QUOTA_PROJECT }}
+
+      - name: Show Output
+        run: |
+          echo "Service URL: ${{ steps.deploy.outputs.url }}"

@@ -1,7 +1,5 @@
 {
-  "cSpell.words": [
-    "graphai"
-  ],
+  "cSpell.words": ["graphai"],
   "editor.defaultFormatter": "esbenp.prettier-vscode",
   "editor.formatOnSave": true,
   "eslint.enable": true,
@@ -11,5 +9,5 @@
   },
   "[dotenv]": {
     "editor.defaultFormatter": "foxundermoon.shell-format"
-  },
+  }
 }

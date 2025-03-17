@@ -1,0 +1,50 @@
+# Study Quiz App - Project Intelligence
+
+## Project Structure
+- Next.js application with API routes
+- React components in `/components` directory
+- API routes in `/app/api` directory
+- Utility functions in `/src` directory
+- Deployment configuration in `.github/workflows`
+
+## Deployment Workflow
+- The application is containerized using Docker
+- GitHub Actions is used for CI/CD to Google Cloud Run
+- Environment variables are stored as GitHub Secrets
+- The deployment region is asia-northeast1
+
+## Environment Variables
+- OPENAI_API_KEY: Required for OpenAI API access
+- GOOGLE_CLOUD_QUOTA_PROJECT: Required for Google Cloud Vision API access
+
+## Development Patterns
+- Use TypeScript for all new code
+- Follow the existing component structure for new features
+- Use Tailwind CSS for styling
+- Use React hooks for state management
+- Use async/await for asynchronous operations
+- Use try/catch blocks for error handling
+
+## Testing Locally
+- Run `npm run dev` for local development
+- Use Docker for testing the containerized application
+- Check browser console for errors
+- Test on multiple devices and browsers when possible
+
+## Deployment Testing
+- Monitor GitHub Actions workflow for successful deployment
+- Check Cloud Run logs for any issues
+- Verify environment variables are correctly set
+- Test the application functionality after deployment
+
+## Common Issues
+- Cold start latency in Cloud Run
+- API rate limits for OpenAI and Google Cloud Vision
+- Camera API compatibility across browsers
+- Image size and quality affecting text extraction
+
+## User Preferences
+- Clear and simple UI
+- Fast response times
+- Accurate question generation
+- Helpful feedback on quiz results
