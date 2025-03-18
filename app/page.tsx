@@ -36,6 +36,37 @@ export default function Home() {
     setImage(imageData);
   }, []);
 
+  const handleGenerateExplanations = useCallback(
+    async (questions: Question[]) => {
+      // setIsLoading(true);
+      try {
+        const response = await fetch('/api/generate-explanations', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ questions }),
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to generate explanations');
+        }
+
+        const data = (await response.json()) as ExplanationsResponse;
+
+        setQuizState((prev) => ({
+          ...prev,
+          explanations: data.explanations,
+        }));
+      } catch (error) {
+        console.error('Error generating explanations:', error);
+      } finally {
+        // setIsLoading(false);
+      }
+    },
+    [setQuizState],
+  );
+
   const handleGenerateQuestions = useCallback(
     async (questionType: QuestionType) => {
       if (!image) return;
@@ -66,7 +97,7 @@ export default function Home() {
         });
 
         // Generate explanations asynchronously after questions are generated
-        handleGenerateExplanations(data.questions);
+        void handleGenerateExplanations(data.questions);
       } catch (error) {
         console.error('Error generating questions:', error);
         // In a real app, you would show an error message to the user
@@ -74,7 +105,7 @@ export default function Home() {
         setIsLoading(false);
       }
     },
-    [image],
+    [image, handleGenerateExplanations],
   );
 
   const handleAnswer = useCallback(
@@ -109,36 +140,6 @@ export default function Home() {
       isComplete: false,
     });
   }, []);
-
-  const handleGenerateExplanations = async (questions: Question[]) => {
-    if (!image) return;
-
-    // setIsLoading(true);
-    try {
-      const response = await fetch('/api/generate-explanations', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ questions }),
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to generate explanations');
-      }
-
-      const data = (await response.json()) as ExplanationsResponse;
-
-      setQuizState((prev) => ({
-        ...prev,
-        explanations: data.explanations,
-      }));
-    } catch (error) {
-      console.error('Error generating explanations:', error);
-    } finally {
-      // setIsLoading(false);
-    }
-  };
 
   // Determine which component to show based on the current state
   const renderContent = useCallback(() => {

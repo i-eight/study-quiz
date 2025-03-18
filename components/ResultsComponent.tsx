@@ -89,30 +89,28 @@ export default function ResultsComponent({
                 ))}
               </div>
 
-              {explanations &&
-                explanations[index] &&
-                explanations[index].text &&
+              {explanations?.[index]?.text &&
                 explanations[index].text.length > 0 && (
                   <>
                     <button
-                      className="mt-2 px-4 py-2 text-sm text-white bg-blue-500 rounded"
+                      className="mt-2 rounded bg-blue-500 px-4 py-2 text-sm text-white"
                       onClick={() => setActiveExplanationIndex(index)}
                     >
                       解説
                     </button>
                     {activeExplanationIndex === index && (
                       <div
-                        className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50"
+                        className="fixed inset-0 flex items-center justify-center bg-black/50"
                         onClick={() => setActiveExplanationIndex(null)}
                       >
                         <div
-                          className="bg-white p-4 rounded mx-4"
+                          className="mx-4 rounded bg-white p-4"
                           onClick={(e) => e.stopPropagation()}
                         >
-                          <h2 className="text-lg font-bold mb-2">解説</h2>
+                          <h2 className="mb-2 text-lg font-bold">解説</h2>
                           <p>{explanations[index].text}</p>
                           <button
-                            className="mt-4 px-4 py-2 text-sm text-white bg-blue-500 rounded"
+                            className="mt-4 rounded bg-blue-500 px-4 py-2 text-sm text-white"
                             onClick={() => setActiveExplanationIndex(null)}
                           >
                             OK

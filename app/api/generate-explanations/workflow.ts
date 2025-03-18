@@ -24,7 +24,7 @@ export function getWorkflow(questions: string): GraphData {
       choices: [ '文法', '語彙', '会話', '発音' ],
       answer: 1
     },
-  　...
+    ...
   ]
 }
 

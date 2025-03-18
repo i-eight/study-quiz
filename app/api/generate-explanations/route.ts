@@ -2,8 +2,6 @@ import 'dotenv/config';
 import { NextRequest, NextResponse } from 'next/server';
 import { GraphAI } from 'graphai';
 import * as agents from '@graphai/agents';
-
-// @ts-ignore: Module resolution for './workflow' is handled by Next.js build process
 import { getWorkflow } from './workflow';
 
 interface QueryResult {
@@ -17,6 +15,7 @@ interface QueryResult {
 export async function POST(request: NextRequest) {
   try {
     // Parse the request body which should contain a JSON with a "questions" array
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const { questions } = await request.json();
     console.log('questions:', questions);
 

@@ -60,12 +60,12 @@ export default function QuestionGenerator({
 
       <div className="mb-6">
         <h3 className="mb-2 font-medium">問題タイプを選択</h3>
-<div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+<div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
   {QuestionKind.map((type) => (
     <button
       key={type}
       onClick={() => setSelectedType(type)}
-      className={`rounded-md px-3 py-2 text-sm transition-colors text-center h-full ${
+      className={`h-full rounded-md px-3 py-2 text-center text-sm transition-colors ${
         selectedType === type
           ? 'bg-blue-600 text-white'
           : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
