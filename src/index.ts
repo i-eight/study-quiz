@@ -2,7 +2,10 @@ import 'dotenv/config';
 import { agentInfoWrapper, GraphAI } from 'graphai';
 import agents from '@graphai/agents';
 import { cloudVisionAgent } from '../app/lib/cloudvisionAgent';
-import { getWorkflow } from '../app/api/generate-questions/workflow';
+import {
+  getWorkflow,
+  isQuestionType,
+} from '../app/api/generate-questions/workflow';
 
 interface QueryResult {
   choices: {
@@ -13,7 +16,11 @@ interface QueryResult {
 }
 
 async function main() {
-  const workflow = getWorkflow('inputs/img_h-kyozai_01_page_03.png');
+  const arg = process.argv[2];
+  const workflow = getWorkflow(
+    'inputs/img_h-kyozai_01_page_03.png',
+    isQuestionType(arg) ? arg : undefined,
+  );
   const graph = new GraphAI(workflow, {
     ...agents,
     cloudVisionAgent: agentInfoWrapper(cloudVisionAgent),

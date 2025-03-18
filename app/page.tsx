@@ -1,11 +1,12 @@
 'use client';
 
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import CameraComponent from '../components/CameraComponent';
 import QuestionGenerator from '../components/QuestionGenerator';
 import QuizComponent from '../components/QuizComponent';
 import ResultsComponent from '../components/ResultsComponent';
 import { Question, QuestionsResponse } from './types';
+import { QuestionType } from './api/generate-questions/workflow';
 
 export interface QuizState {
   questions: Question[];
@@ -24,65 +25,70 @@ export default function Home() {
     isComplete: false,
   });
 
-  const handleImageCapture = (imageData: string) => {
+  const handleImageCapture = useCallback((imageData: string) => {
     setImage(imageData);
-  };
+  }, []);
 
-  const handleGenerateQuestions = async () => {
-    if (!image) return;
+  const handleGenerateQuestions = useCallback(
+    async (questionType: QuestionType) => {
+      if (!image) return;
 
-    setIsLoading(true);
-    try {
-      // In a real implementation, this would call the API
-      // For now, we'll simulate the API call with a timeout
-      const response = await fetch('/api/generate-questions', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ image }),
-      });
+      setIsLoading(true);
+      try {
+        // Call the API with the selected question type
+        const response = await fetch('/api/generate-questions', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ image, questionType }),
+        });
 
-      if (!response.ok) {
-        throw new Error('Failed to generate questions');
+        if (!response.ok) {
+          throw new Error('Failed to generate questions');
+        }
+
+        const data = (await response.json()) as QuestionsResponse;
+
+        setQuizState({
+          questions: data.questions,
+          userAnswers: Array<number>(data.questions.length).fill(-1),
+          currentQuestionIndex: 0,
+          isComplete: false,
+        });
+      } catch (error) {
+        console.error('Error generating questions:', error);
+        // In a real app, you would show an error message to the user
+      } finally {
+        setIsLoading(false);
       }
+    },
+    [image],
+  );
 
-      const data = (await response.json()) as QuestionsResponse;
+  const handleAnswer = useCallback(
+    (questionIndex: number, answerIndex: number) => {
+      setQuizState((prev) => {
+        const newUserAnswers = [...prev.userAnswers];
+        newUserAnswers[questionIndex] = answerIndex;
 
-      setQuizState({
-        questions: data.questions,
-        userAnswers: Array<number>(data.questions.length).fill(-1),
-        currentQuestionIndex: 0,
-        isComplete: false,
+        // If this is the last question, mark the quiz as complete
+        const isComplete = questionIndex === prev.questions.length - 1;
+
+        return {
+          ...prev,
+          userAnswers: newUserAnswers,
+          currentQuestionIndex: isComplete
+            ? prev.currentQuestionIndex
+            : prev.currentQuestionIndex + 1,
+          isComplete,
+        };
       });
-    } catch (error) {
-      console.error('Error generating questions:', error);
-      // In a real app, you would show an error message to the user
-    } finally {
-      setIsLoading(false);
-    }
-  };
+    },
+    [],
+  );
 
-  const handleAnswer = (questionIndex: number, answerIndex: number) => {
-    setQuizState((prev) => {
-      const newUserAnswers = [...prev.userAnswers];
-      newUserAnswers[questionIndex] = answerIndex;
-
-      // If this is the last question, mark the quiz as complete
-      const isComplete = questionIndex === prev.questions.length - 1;
-
-      return {
-        ...prev,
-        userAnswers: newUserAnswers,
-        currentQuestionIndex: isComplete
-          ? prev.currentQuestionIndex
-          : prev.currentQuestionIndex + 1,
-        isComplete,
-      };
-    });
-  };
-
-  const handleReset = () => {
+  const handleReset = useCallback(() => {
     setImage(null);
     setQuizState({
       questions: [],
@@ -90,10 +96,10 @@ export default function Home() {
       currentQuestionIndex: 0,
       isComplete: false,
     });
-  };
+  }, []);
 
   // Determine which component to show based on the current state
-  const renderContent = () => {
+  const renderContent = useCallback(() => {
     if (!image) {
       return <CameraComponent onCapture={handleImageCapture} />;
     }
@@ -114,7 +120,15 @@ export default function Home() {
     }
 
     return <ResultsComponent quizState={quizState} onReset={handleReset} />;
-  };
+  }, [
+    handleAnswer,
+    handleGenerateQuestions,
+    handleImageCapture,
+    handleReset,
+    image,
+    isLoading,
+    quizState,
+  ]);
 
   return (
     <div className="flex min-h-screen flex-col">

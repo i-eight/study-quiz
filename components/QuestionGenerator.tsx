@@ -1,11 +1,23 @@
 'use client';
+import { useState } from 'react';
+
+// Import question types from workflow
+import { QuestionType, QuestionKind } from '../app/api/generate-questions/workflow';
 
 interface QuestionGeneratorProps {
   image: string;
-  onGenerate: () => Promise<void>;
+  onGenerate: (questionType: QuestionType) => Promise<void>;
   isLoading: boolean;
   onReset: () => void;
 }
+
+// Question type descriptions
+const questionTypeDescriptions: Record<QuestionType, string> = {
+  words: '英単語の意味を当てる選択問題',
+  cloze: '英単語のスペルを意識する穴埋め問題',
+  sentence: '短文の内容理解を問う選択問題',
+  translation: '英文の和訳を問う選択問題',
+};
 
 export default function QuestionGenerator({
   image,
@@ -13,11 +25,12 @@ export default function QuestionGenerator({
   isLoading,
   onReset,
 }: QuestionGeneratorProps) {
+  const [selectedType, setSelectedType] = useState<QuestionType>('words');
   return (
     <div className="card">
       <h2 className="mb-4 text-xl font-bold">画像から問題を生成</h2>
 
-      <div className="mb-6">
+      <div className="mb-4">
         <div className="relative">
           <img
             src={image}
@@ -45,9 +58,34 @@ export default function QuestionGenerator({
         </div>
       </div>
 
+      <div className="mb-6">
+        <h3 className="mb-2 font-medium">問題タイプを選択</h3>
+<div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+  {QuestionKind.map((type) => (
+    <button
+      key={type}
+      onClick={() => setSelectedType(type)}
+      className={`rounded-md px-3 py-2 text-sm transition-colors text-center h-full ${
+        selectedType === type
+          ? 'bg-blue-600 text-white'
+          : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+      }`}
+    >
+      {questionTypeDescriptions[type]}
+    </button>
+  ))}
+</div>
+        <p className="mt-2 text-sm text-gray-600">
+          {selectedType === 'words' && '特に学習が必要と予想できる英単語を抜き出して、英単語の正しい意味を当てる選択肢問題を生成します。'}
+          {selectedType === 'cloze' && '英単語のスペルを意識できるように、テキストから選んだ単語を隠した穴埋め問題を生成します。'}
+          {selectedType === 'sentence' && '読解力を養うために、テキストから抜き出した短文の内容理解を問う選択問題を生成します。'}
+          {selectedType === 'translation' && '読解力を鍛えるために、テキストの内容に関連した英文の和訳を問う選択問題を生成します。'}
+        </p>
+      </div>
+
       <div className="flex justify-center">
         <button
-          onClick={onGenerate}
+          onClick={() => onGenerate(selectedType)}
           disabled={isLoading}
           className={`btn btn-primary flex items-center justify-center ${
             isLoading ? 'cursor-not-allowed opacity-70' : ''

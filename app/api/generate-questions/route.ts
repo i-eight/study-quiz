@@ -6,7 +6,7 @@ import * as agents from '@graphai/agents';
 import { GraphAI, agentInfoWrapper } from 'graphai';
 import { NextRequest, NextResponse } from 'next/server';
 import { cloudVisionAgent } from '../../lib/cloudvisionAgent';
-import { getWorkflow } from './workflow';
+import { getWorkflow, isQuestionType, QuestionType } from './workflow';
 
 interface QueryResult {
   choices: {
@@ -48,7 +48,7 @@ interface QueryResult {
 export async function POST(request: NextRequest) {
   try {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    const { image } = await request.json();
+    const { image, questionType } = await request.json();
 
     // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
     const base64Data = image.replace(/^data:image\/\w+;base64,/, '') as string;
@@ -60,7 +60,14 @@ export async function POST(request: NextRequest) {
     await fs.writeFile(tempFilePath, buffer);
     console.log('Image saved to:', tempFilePath);
 
-    const workflow = getWorkflow(tempFilePath);
+    // Validate and use the question type
+    let validQuestionType: QuestionType | undefined = undefined;
+    if (isQuestionType(questionType as string)) {
+      validQuestionType = questionType as QuestionType;
+    }
+    console.log('Using question type:', validQuestionType);
+
+    const workflow = getWorkflow(tempFilePath, validQuestionType);
 
     const graph = new GraphAI(workflow, {
       ...agents,
