@@ -1,6 +1,7 @@
 'use client';
 
 import { QuizState } from '../app/page';
+import React, { useState } from 'react';
 
 interface ResultsComponentProps {
   quizState: QuizState;
@@ -11,7 +12,10 @@ export default function ResultsComponent({
   quizState,
   onReset,
 }: ResultsComponentProps) {
-  const { questions, userAnswers } = quizState;
+  const { questions, userAnswers, explanations } = quizState;
+  const [activeExplanationIndex, setActiveExplanationIndex] = useState<
+    number | null
+  >(null);
 
   // Calculate score
   const correctAnswers = questions.filter(
@@ -84,6 +88,40 @@ export default function ResultsComponent({
                   </div>
                 ))}
               </div>
+
+              {explanations &&
+                explanations[index] &&
+                explanations[index].text &&
+                explanations[index].text.length > 0 && (
+                  <>
+                    <button
+                      className="mt-2 px-4 py-2 text-sm text-white bg-blue-500 rounded"
+                      onClick={() => setActiveExplanationIndex(index)}
+                    >
+                      解説
+                    </button>
+                    {activeExplanationIndex === index && (
+                      <div
+                        className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50"
+                        onClick={() => setActiveExplanationIndex(null)}
+                      >
+                        <div
+                          className="bg-white p-4 rounded mx-4"
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          <h2 className="text-lg font-bold mb-2">解説</h2>
+                          <p>{explanations[index].text}</p>
+                          <button
+                            className="mt-4 px-4 py-2 text-sm text-white bg-blue-500 rounded"
+                            onClick={() => setActiveExplanationIndex(null)}
+                          >
+                            OK
+                          </button>
+                        </div>
+                      </div>
+                    )}
+                  </>
+                )}
             </div>
           );
         })}

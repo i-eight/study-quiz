@@ -5,12 +5,18 @@ import CameraComponent from '../components/CameraComponent';
 import QuestionGenerator from '../components/QuestionGenerator';
 import QuizComponent from '../components/QuizComponent';
 import ResultsComponent from '../components/ResultsComponent';
-import { Question, QuestionsResponse } from './types';
 import { QuestionType } from './api/generate-questions/workflow';
+import {
+  Explanation,
+  ExplanationsResponse,
+  Question,
+  QuestionsResponse,
+} from './types';
 
 export interface QuizState {
   questions: Question[];
   userAnswers: number[];
+  explanations: Explanation[];
   currentQuestionIndex: number;
   isComplete: boolean;
 }
@@ -21,6 +27,7 @@ export default function Home() {
   const [quizState, setQuizState] = useState<QuizState>({
     questions: [],
     userAnswers: [],
+    explanations: [],
     currentQuestionIndex: 0,
     isComplete: false,
   });
@@ -54,8 +61,12 @@ export default function Home() {
           questions: data.questions,
           userAnswers: Array<number>(data.questions.length).fill(-1),
           currentQuestionIndex: 0,
+          explanations: [],
           isComplete: false,
         });
+
+        // Generate explanations asynchronously after questions are generated
+        handleGenerateExplanations(data.questions);
       } catch (error) {
         console.error('Error generating questions:', error);
         // In a real app, you would show an error message to the user
@@ -93,10 +104,41 @@ export default function Home() {
     setQuizState({
       questions: [],
       userAnswers: [],
+      explanations: [],
       currentQuestionIndex: 0,
       isComplete: false,
     });
   }, []);
+
+  const handleGenerateExplanations = async (questions: Question[]) => {
+    if (!image) return;
+
+    // setIsLoading(true);
+    try {
+      const response = await fetch('/api/generate-explanations', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ questions }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to generate explanations');
+      }
+
+      const data = (await response.json()) as ExplanationsResponse;
+
+      setQuizState((prev) => ({
+        ...prev,
+        explanations: data.explanations,
+      }));
+    } catch (error) {
+      console.error('Error generating explanations:', error);
+    } finally {
+      // setIsLoading(false);
+    }
+  };
 
   // Determine which component to show based on the current state
   const renderContent = useCallback(() => {
