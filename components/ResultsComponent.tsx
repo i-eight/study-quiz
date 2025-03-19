@@ -93,7 +93,7 @@ export default function ResultsComponent({
                 explanations[index].text.length > 0 && (
                   <>
                     <button
-                      className="mt-2 rounded bg-blue-500 px-4 py-2 text-sm text-white"
+                      className="mt-2 rounded bg-transparent px-4 py-2 text-sm text-blue-600 hover:bg-blue-50 border border-blue-500"
                       onClick={() => setActiveExplanationIndex(index)}
                     >
                       解説
@@ -109,12 +109,14 @@ export default function ResultsComponent({
                         >
                           <h2 className="mb-2 text-lg font-bold">解説</h2>
                           <p>{explanations[index].text}</p>
-                          <button
-                            className="mt-4 rounded bg-blue-500 px-4 py-2 text-sm text-white"
-                            onClick={() => setActiveExplanationIndex(null)}
-                          >
-                            OK
-                          </button>
+                          <div className="mt-4 flex justify-center">
+                            <button
+                              className="rounded bg-blue-500 px-4 py-2 text-sm text-white"
+                              onClick={() => setActiveExplanationIndex(null)}
+                            >
+                              OK
+                            </button>
+                          </div>
                         </div>
                       </div>
                     )}
