@@ -108,7 +108,11 @@ export default function ResultsComponent({
                           onClick={(e) => e.stopPropagation()}
                         >
                           <h2 className="mb-2 text-lg font-bold">解説</h2>
-                          <p>{explanations[index].text}</p>
+                          {explanations[index].text.map((paragraph, pIndex) => (
+                            <p key={pIndex} className="mb-2">
+                              {paragraph}
+                            </p>
+                          ))}
                           <div className="mt-4 flex justify-center">
                             <button
                               className="rounded bg-blue-500 px-4 py-2 text-sm text-white"

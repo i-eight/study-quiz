@@ -7,6 +7,8 @@ import { GraphAI, agentInfoWrapper } from 'graphai';
 import { NextRequest, NextResponse } from 'next/server';
 import { cloudVisionAgent } from '../../lib/cloudvisionAgent';
 import { getWorkflow, isQuestionType, QuestionType } from './workflow';
+import { Question, QuestionsResponse } from '../../types';
+import { swap } from '../../lib/swap';
 
 interface QueryResult {
   choices: {
@@ -79,8 +81,18 @@ export async function POST(request: NextRequest) {
     console.log('result:', result);
     console.log('Questions:', questions);
 
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    const parsedQuestions = JSON.parse(questions ?? '{}');
+    const parsedQuestions = JSON.parse(questions ?? '{}') as QuestionsResponse;
+
+    // Randomize choices if questions exist
+    if (
+      parsedQuestions?.questions &&
+      Array.isArray(parsedQuestions.questions)
+    ) {
+      // Type assertion to help TypeScript understand the structure
+      const typedQuestions = parsedQuestions.questions;
+      parsedQuestions.questions = randomizeChoices(typedQuestions);
+    }
+
     return NextResponse.json(parsedQuestions);
 
     // // For demo purposes, return mock questions after a delay
@@ -93,4 +105,38 @@ export async function POST(request: NextRequest) {
       { status: 500 },
     );
   }
+}
+
+// Function to randomize choices and update answer index
+function randomizeChoices(questions: Question[]): Question[] {
+  return questions.map((question) => {
+    // Original choices and answer
+    const originalChoices = [...question.choices];
+    const originalAnswer = question.answer;
+
+    // Make sure the answer index is valid
+    if (originalAnswer < 0 || originalAnswer >= originalChoices.length) {
+      return question; // Return unchanged if invalid
+    }
+
+    const correctChoice = originalChoices[originalAnswer];
+
+    // Shuffle choices using Fisher-Yates algorithm (more reliable)
+    const shuffledChoices = [...originalChoices];
+    for (let i = shuffledChoices.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      swap(shuffledChoices, i, j);
+    }
+
+    // Find new index of the correct answer
+    const newAnswerIndex = shuffledChoices.findIndex(
+      (choice) => choice === correctChoice,
+    );
+
+    return {
+      ...question,
+      choices: shuffledChoices,
+      answer: newAnswerIndex >= 0 ? newAnswerIndex : originalAnswer, // Fallback to original if not found
+    };
+  });
 }

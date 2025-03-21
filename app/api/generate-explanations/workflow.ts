@@ -18,12 +18,12 @@ export function getWorkflow(questions: string): GraphData {
 {
   questions: [
     {
-      question: '「increase」の意味は何ですか？',
+      question: ['「increase」の意味は何ですか？'],
       choices: [ '増やす', '減らす', '変える', '保存する' ],
       answer: 0
     },
     {
-      question: '「vocabulary」の意味は何ですか？',
+      question: ['「vocabulary」の意味は何ですか？'],
       choices: [ '文法', '語彙', '会話', '発音' ],
       answer: 1
     },
@@ -35,10 +35,10 @@ export function getWorkflow(questions: string): GraphData {
 {
   explanations: [
     {
-      "text": "'increase' は「増やす」という意味です。この動詞は数量や程度を増加させることを指します。例えば、「We need to increase our sales.（私たちは売上を増やす必要があります）」というふうに使います。'減らす'（B）は 'decrease' という動詞に該当し、'変える'（C）は 'change'、'保存する'（D）は 'save' に該当するため、意味が異なります。"
+      "text": ["'increase' は「増やす」という意味です。この動詞は数量や程度を増加させることを指します。", "例えば、「We need to increase our sales.（私たちは売上を増やす必要があります）」というふうに使います。", "'減らす'（B）は 'decrease' という動詞に該当し、'変える'（C）は 'change'、'保存する'（D）は 'save' に該当するため、意味が異なります。"]
     },
     {
-      "text": "'vocabulary' は「語彙」を意味します。これは、ある言語における単語や表現の集合を指します。言語学習において、語彙を増やすことは非常に重要です。'文法'（A）は 'grammar'、'会話'（C）は 'conversation'、'発音'（D）は 'pronunciation' に該当するため、意味が異なります。"
+      "text": ["'vocabulary' は「語彙」を意味します。これは、ある言語における単語や表現の集合を指します。", "言語学習において、語彙を増やすことは非常に重要です。", "'文法'（A）は 'grammar'、'会話'（C）は 'conversation'、'発音'（D）は 'pronunciation' に該当するため、意味が異なります。"]
     },
     ...
   ]

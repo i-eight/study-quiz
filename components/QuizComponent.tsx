@@ -57,7 +57,13 @@ export default function QuizComponent({
       </div>
 
       <div className="mb-8">
-        <p className="mb-4 text-lg font-medium">{currentQuestion?.question}</p>
+        <div className="mb-4">
+          {currentQuestion?.question.map((questionPart, idx) => (
+            <p key={idx} className="mb-2 text-lg font-medium">
+              {questionPart}
+            </p>
+          ))}
+        </div>
 
         <div className="space-y-3">
           {currentQuestion?.choices.map((choice, index) => (
