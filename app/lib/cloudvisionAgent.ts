@@ -2,6 +2,9 @@ import 'dotenv/config';
 import { ImageAnnotatorClient } from '@google-cloud/vision';
 import { AgentFunction } from 'graphai';
 
+if (!process.env.GOOGLE_CLOUD_QUOTA_PROJECT) {
+  throw new Error('GOOGLE_CLOUD_QUOTA_PROJECT is not defined');
+}
 const client = new ImageAnnotatorClient({
   projectId: process.env.GOOGLE_CLOUD_QUOTA_PROJECT,
 });
