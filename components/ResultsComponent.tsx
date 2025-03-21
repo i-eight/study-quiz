@@ -89,42 +89,54 @@ export default function ResultsComponent({
                 ))}
               </div>
 
-              {explanations?.[index]?.text &&
-                explanations[index].text.length > 0 && (
-                  <>
-                    <button
-                      className="mt-2 rounded border border-blue-500 bg-transparent px-4 py-2 text-sm text-blue-600 hover:bg-blue-50"
-                      onClick={() => setActiveExplanationIndex(index)}
+              <button
+                className={`mt-2 rounded border px-4 py-2 text-sm ${
+                  explanations?.[index]?.text &&
+                  explanations[index].text.length > 0
+                    ? 'border-blue-500 bg-transparent text-blue-600 hover:bg-blue-50'
+                    : 'cursor-not-allowed border-gray-300 bg-transparent text-gray-400'
+                }`}
+                onClick={() => {
+                  if (
+                    explanations?.[index]?.text &&
+                    explanations[index].text.length > 0
+                  ) {
+                    setActiveExplanationIndex(index);
+                  }
+                }}
+                disabled={
+                  !explanations?.[index]?.text ||
+                  explanations[index].text.length === 0
+                }
+              >
+                解説
+              </button>
+              {activeExplanationIndex === index &&
+                explanations?.[index]?.text && (
+                  <div
+                    className="fixed inset-0 flex items-center justify-center bg-black/50"
+                    onClick={() => setActiveExplanationIndex(null)}
+                  >
+                    <div
+                      className="mx-4 rounded bg-white p-4"
+                      onClick={(e) => e.stopPropagation()}
                     >
-                      解説
-                    </button>
-                    {activeExplanationIndex === index && (
-                      <div
-                        className="fixed inset-0 flex items-center justify-center bg-black/50"
-                        onClick={() => setActiveExplanationIndex(null)}
-                      >
-                        <div
-                          className="mx-4 rounded bg-white p-4"
-                          onClick={(e) => e.stopPropagation()}
+                      <h2 className="mb-2 text-lg font-bold">解説</h2>
+                      {explanations[index].text.map((paragraph, pIndex) => (
+                        <p key={pIndex} className="mb-2">
+                          {paragraph}
+                        </p>
+                      ))}
+                      <div className="mt-4 flex justify-center">
+                        <button
+                          className="rounded bg-blue-500 px-4 py-2 text-sm text-white"
+                          onClick={() => setActiveExplanationIndex(null)}
                         >
-                          <h2 className="mb-2 text-lg font-bold">解説</h2>
-                          {explanations[index].text.map((paragraph, pIndex) => (
-                            <p key={pIndex} className="mb-2">
-                              {paragraph}
-                            </p>
-                          ))}
-                          <div className="mt-4 flex justify-center">
-                            <button
-                              className="rounded bg-blue-500 px-4 py-2 text-sm text-white"
-                              onClick={() => setActiveExplanationIndex(null)}
-                            >
-                              OK
-                            </button>
-                          </div>
-                        </div>
+                          OK
+                        </button>
                       </div>
-                    )}
-                  </>
+                    </div>
+                  </div>
                 )}
             </div>
           );
