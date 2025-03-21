@@ -3,7 +3,7 @@ export interface QuestionsResponse {
 }
 
 export interface Question {
-  question: string;
+  question: string[];
   choices: string[];
   answer: number;
 }
@@ -13,5 +13,5 @@ export interface ExplanationsResponse {
 }
 
 export interface Explanation {
-  text: string;
+  text: string[];
 }

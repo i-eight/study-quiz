@@ -72,7 +72,7 @@ export function getWorkflow(filepath: string, type?: QuestionType): GraphData {
 {
   "questions": [
     {
-      "question": "問題文",
+      "question": ["問題文1", "問題文2"],
       "choices": ["選択肢1", "選択肢2", "選択肢3", "選択肢4"],
       "answer": 正解の選択肢のインデックス
     },
