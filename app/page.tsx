@@ -177,7 +177,7 @@ export default function Home() {
     <div className="flex min-h-screen flex-col">
       <header className="bg-blue-600 py-6 text-white">
         <div className="container mx-auto px-4">
-          <h1 className="text-2xl font-bold">Study Quiz App</h1>
+          <h1 className="text-2xl font-bold">英あい先生</h1>
         </div>
       </header>
 

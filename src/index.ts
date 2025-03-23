@@ -1,10 +1,12 @@
 import 'dotenv/config';
-import { agentInfoWrapper, GraphAI } from 'graphai';
+import fs from 'node:fs';
+import { agentInfoWrapper, GraphAI, GraphData } from 'graphai';
 import agents from '@graphai/agents';
 import { cloudVisionAgent } from '../app/lib/cloudvisionAgent';
 import {
   getWorkflow,
   isQuestionType,
+  QuestionType,
 } from '../app/api/generate-questions/workflow';
 
 interface QueryResult {
@@ -15,12 +17,37 @@ interface QueryResult {
   }[];
 }
 
+export function getTextWorkflow(
+  filepath: string,
+  type?: QuestionType,
+): GraphData {
+  const value = fs.readFileSync(filepath, 'utf-8');
+  const graph = getWorkflow(filepath, type);
+  return {
+    ...graph,
+    nodes: {
+      ...graph.nodes,
+      inputData: {
+        value,
+      },
+    },
+  };
+}
+
+const loadText = true;
+
 async function main() {
   const arg = process.argv[2];
-  const workflow = getWorkflow(
-    'inputs/img_h-kyozai_01_page_03.png',
-    isQuestionType(arg) ? arg : undefined,
-  );
+  const workflow = loadText
+    ? getTextWorkflow(
+        'inputs/img_h-kyozai_01_page_03.txt',
+        isQuestionType(arg) ? arg : undefined,
+      )
+    : getWorkflow(
+        'inputs/img_h-kyozai_01_page_03.png',
+        isQuestionType(arg) ? arg : undefined,
+      );
+
   const graph = new GraphAI(workflow, {
     ...agents,
     cloudVisionAgent: agentInfoWrapper(cloudVisionAgent),
