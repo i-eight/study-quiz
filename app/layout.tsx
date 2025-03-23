@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'Study Quiz App',
+  title: '英あい先生',
   description: 'Take a photo of a textbook page and generate quiz questions',
 };
 
